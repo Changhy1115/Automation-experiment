@@ -1,3 +1,6 @@
-# Automation-experiment
-# 大连理工大学电子信息与电气工程学部自动化专业课实验
-Automation experiment of DUT
+#  Automation experiment of DUT
+##  大连理工大学自动化专业课实验报告
+- 数电实验
+- 电机拖动实验
+- 自控实验
+- 计算机原理实验
