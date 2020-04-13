@@ -1,0 +1,257 @@
+;------步进电机控制---------------------
+
+.model	small
+.386
+io_address	equ 200h
+io_ad		equ 220h
+i8253		equ 230h 
+io_led		equ 210h 
+data	segment
+speed	db	7fh
+buf		db	33h
+dir		db	0
+voice	db	01h
+Ledcode db	3fh,06h,5bh,4fh,66h,6dh,7dh,07h,7fh,67h,77h,7ch,39h,5eh,79h,71h ;数码管编码
+led1	db  01h
+led3	db	99h,5ah,3ch,0ffh,0ffh,3ch,5ah,99h
+data ends
+
+ssg	segment	stack
+	db	100	dup(0)
+ssg	ends
+
+code segment
+	assume cs:code,ds:data,ss:ssg
+start:
+	cli
+	mov ax,data
+	mov ds,ax
+	
+	;设置8259中断屏蔽字
+	in al,21h
+	and al,11011111b	;打开主片的5号中断
+	out 21h,al
+	
+	;设置中断向量表
+	push DS			;设置主片5号中断的地址
+	mov ax,0		;将int_proc的地址送到35号中断向量表中
+	mov ds,ax
+	lea ax,cs:int_proc
+	mov si,35h
+	add si,si
+	add si,si
+	mov ds:[si],ax
+	push cs
+	pop ax
+	mov ds:[si+2],ax
+	pop ds
+	
+;------8254定时初始化---------------------
+	mov dx,i8253
+	add dx,3
+	mov al,36h
+	out dx,al
+	mov ax,10000
+	mov dx,i8253
+	out dx,al
+	mov al,ah
+	out dx,al
+	add dx,3
+	mov al,74h
+	out dx,al
+	mov ax,400
+	dec dx
+	dec dx
+	out dx,al
+	mov al,ah
+	out dx,al
+
+;----------8255工作------------------------
+	mov dx,io_address
+	add dx,03
+	mov al,82h	;设置A口、B口均为输入
+	out dx,al
+	;给电机赋初始相位
+	mov dx,io_address
+	mov al,buf
+	out dx,al 
+	;启动ADC
+	mov dx,io_ad
+	out dx,al
+	;等待中断主循环	
+	sti	
+ll:
+	cmp speed,0
+	je stop
+	mov dx,io_address
+	inc dx
+	in al,dx	;输入B口的转向状态
+	mov dir,al
+	cmp dir,1	;判断转向
+	jnz nx0
+	mov al,buf
+	ror al,1
+	jmp nx1
+nx0:
+	mov al,buf
+	rol al,1
+
+nx1:
+	mov dx,io_address
+
+	cmp speed,70h
+	jb ww
+
+	push ax		;大于70高速
+	and al,0fh
+	cmp voice,0
+	je kk2
+	add al,80h	;speed>=70h,voice=1扬声器工作
+kk2:	
+	cmp dir,1	;判断方向指示灯哪个亮
+	jnz green
+	add al,20h
+	jmp kk21
+green:
+	add al,10h	
+kk21:	
+	out dx,al
+	xor voice,01h
+	pop ax
+	jmp kk1
+
+ww:			;小于70低速
+	push ax
+	and al,0fh
+
+	cmp dir,1
+	jnz green1
+	add al,20h
+	jmp kk11
+green1:
+	add al,10h	
+kk11:		
+	out dx,al
+	pop ax
+	jmp kk1
+kk1:	
+	mov buf,al
+	call disp
+	jmp end1
+
+stop:
+	mov al,01000000b
+	mov dx,200h
+	out dx,al
+
+end1:
+	call dellay	;调用延时
+	jmp ll		
+;主循环结束  
+
+;--------延时子程序-------------------
+dellay	proc
+	push ax
+	push cx
+	push dx
+	mov dh,speed
+	neg dh	;取反
+x1:	mov cx,0180h
+x2:	loop x2
+	dec dh
+	jnz x1
+	pop dx
+	pop cx
+	pop ax
+	ret
+dellay endp
+
+;-------------数码管显示程序---------------
+disp proc 
+    push    bx
+    push    dx
+    push    ax
+    push    cx
+    mov     al, speed
+    mov     si,offset  ledcode
+    mov     bx,si
+mov     ch,al
+	cmp	    led1,01h;判断亮哪位
+	jne	    led2
+    mov     cl,4		;亮高位
+    ror     al,cl
+    and     al,0fh                             
+    mov     ah,0
+    add     bx,ax
+    mov     al,[bx]
+    mov     dx,io_led
+    out     dx,al
+    mov     al,02h
+    inc     dx
+    nop
+    out     dx,al
+    call    delay 
+    mov     led1,0
+    jmp	    kkk
+    
+led2:					;亮低位
+    mov     al,ch
+    and     al,0fh
+    mov     ah,0
+    add     si,ax
+    mov     al,[si]
+    mov     dx,io_led
+    out     dx,al
+    mov     al,01h
+    Inc	 	dx
+    out 	dx,al
+    call    delay  
+    mov 	led1,01h 
+kkk:
+    pop    cx
+    pop     ax
+    pop     dx
+    pop     bx
+    ret
+disp 	endp
+;---------数码管延迟子程序-------------
+delay   proc
+    push    cx
+    mov cx,50h
+  x3:
+    loop    x3
+    pop cx
+    ret
+delay   endp
+
+;--------中断子程序 读取ad-------------------
+int_proc proc far
+	push dx
+	push cx
+	push ax 
+	
+	mov dx,io_ad	;变阻器决定转速
+	add	dx,2
+
+lll:in al,dx
+	test al,01h
+	jz lll
+	
+	dec dx
+	in al,dx	;读ad转换完结果
+	mov speed,al                                                       
+	
+	dec dx
+	out dx,al	;启动ad 
+	
+	mov al,20h
+	out 20h,al  
+
+	pop ax
+	pop cx
+	pop dx
+	iret
+int_proc endp 
+
+code ends
+	end start

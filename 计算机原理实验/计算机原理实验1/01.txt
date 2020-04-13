@@ -1,0 +1,32 @@
+data		segment	page
+	data1	dw	0019h
+	result	dw	0000h
+data		ends
+
+ssg		segment		para	stack
+	dw	256	dup(0)
+ssg		ends
+
+code		segment	page
+		assume	cs:code,ds:data,ss:ssg
+start:	mov	ax,data
+	mov	ds,ax		;寄存器初始化
+	lea	bx,data1
+	mov	ax,[bx]		;data1->ax
+	mov	bx,1		;bx->1
+	mov	cx,0		;cx->0
+loop1:	cmp	ax,bx		;先比较再相减
+	sub	ax,bx
+	jnl	loop2 		;ax>=bx 跳转到loop2
+	jmp	over  		;ax<bx 跳转到over
+	
+loop2:	add	bx,2		;bx+2
+	add	cx,1		;cx+1
+	jmp	loop1		;循环到loop1
+
+over:	mov	result,cx		;取cx 赋值给result
+	mov	ax,4c00h		;退出
+	int	21h
+
+code		ends
+end	start

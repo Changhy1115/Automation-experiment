@@ -1,0 +1,18 @@
+﻿Field=#~Integer~#~50|Field=Comment~String~Comment~100|Field=Description~String~Description~100|Field=Designator~String~Designator~100|Field=Footprint~String~Footprint~100|Field=LibRef~String~LibRef~100|Field=Quantity~Integer~Quantity~100|ReportField=Currency~<none>|ReportField=ProductionQuantity~1|ReportField=ProjectFileName~final.PrjPcb|ReportField=ProjectFullPath~E:\计算机原理\实验\课程设计\final\final.PrjPcb|ReportField=Title~Bill of Materials For Project [final.PrjPcb] (No PCB Document Selected)|ReportField=TotalQuantity~38|ReportField=ReportTime~16:29:57|ReportField=ReportDate~2018/12/25 星期二|ReportField=ReportDateTime~2018/12/25 星期二 16:29:57|ReportField=OutputName~Bill of Materials|ReportField=OutputType~BOM_PartType|ReportField=GeneratorName~BOM|ReportField=GeneratorDescription~Bill of Materials|ReportField=VariantName~None|ReportField=Address1~|ReportField=Address2~|ReportField=Address3~|ReportField=Address4~|ReportField=Application_BuildNumber~|ReportField=ApprovedBy~|ReportField=Author~|ReportField=CheckedBy~|ReportField=CompanyName~|ReportField=CurrentDate~2018/12/25 星期二|ReportField=CurrentTime~16:29:36|ReportField=Date~|ReportField=DocumentFullPathAndName~E:\计算机原理\实验\课程设计\final\计算机原理课程设计2.SchDoc|ReportField=DocumentName~计算机原理课程设计2.SchDoc|ReportField=DocumentNumber~|ReportField=DrawnBy~|ReportField=Engineer~|ReportField=ImagePath~|ReportField=ModifiedDate~2018/12/25 星期二|ReportField=Organization~|ReportField=ProjectName~final.PrjPcb|ReportField=Revision~|ReportField=Rule~|ReportField=SheetNumber~|ReportField=SheetTotal~|ReportField=Time~|ReportField=Title~|ReportField=DataSourceFileName~final.PrjPcb|ReportField=DataSourceFullPath~E:\计算机原理\实验\课程设计\final\final.PrjPcb|ReportField=PCBConfigurationName~Sources|ReportField=Item~|ReportField=ItemRevision~|ReportField=ItemAndRevision~|ReportField=ItemRevisionBase~|ReportField=ItemRevisionLevel1~|ReportField=ItemRevisionLevel2~|ReportField=ItemRevisionLevel1AndBase~|ReportField=ItemRevisionLevel2AndLevel1~
+1|ULN2003A||||ULN2003A|1
+2|||1, 2, 3||NOR|3
+3|NOR||4||NOR|1
+4|U6||8255||8255|1
+5|U4||ADC0809||ADC0809|1
+6|MOTOR STEPPER||M1||MOTOR STEPPER|1
+7|NOT|Inverter|Q1, Q2, Q3||NOT|3
+8|RPot|Potentiometer|R1, R5|VR5|RPot|2
+9|Res1|Resistor|R2|AXIAL-0.3|Res1|1
+10|Res2|Resistor|R3, R4, R6, R7, R8, R9, R10, R11, R12, R13, R14, R15, R16, R17|AXIAL-0.4|Res2|14
+11|SW1|SPDT Subminiature Toggle Switch, Right Angle Mounting, Vertical Actuation|S1, S2|TL36WW15050|SW-SPDT|2
+12|LCD12864||U2|LCD1602|LCD1602|1
+13|ULN2803A|High-Voltage, High-Current Darlington Array|U3|A18|ULN2803A|1
+14|6*LED||U11||6*LED|1
+15|SN74LS07D||U12, U13||SN74LS07D|2
+16|DM74LS573N|OCTAL D-TYPE TRANSPARENT LCH 3SO|U45, U48|DIP-20|SN74HC573, SN74HCT573|2
+17|8253A||U?||8253A|1
